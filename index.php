@@ -14,7 +14,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-8">
-                        <h1>coba </h1>
+                        <h1>coba lah </h1>
                         <p>Bergabunglah bersama jutaan orang lainnya...</p>
                     </div>
                     <div class="col-md-4">
