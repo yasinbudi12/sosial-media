@@ -13,7 +13,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-8">
-                        <h1>Selamat datang di sosial media fesbuk</h1>
+                        <h1>Selamat datang di sosial media fesbukk </h1>
                         <p>Bergabunglah bersama jutaan orang lainnya...</p>
                     </div>
                     <div class="col-md-4">
