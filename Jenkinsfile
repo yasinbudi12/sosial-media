@@ -43,7 +43,7 @@ pipeline {
                 branch 'master'
             }
             steps {
-                sh 'docker rmi yasinbudi12:coba/$DOCKER_IMAGE:
+                sh 'docker rmi yasinbudi12:coba/$DOCKER_IMAGE: '
             }      
         }
         stage('Git') {
