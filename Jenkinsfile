@@ -1,60 +1,56 @@
 pipeline {
-    parameters {
-        string(name: 'DEVELOPMENT_NAMESPACE',      description: 'Development Namespace',                defaultValue: 'namespace')
-        string(name: 'DOCKER_IMAGE_NAME',          description: 'Docker Image Name',                    defaultValue: 'namaimage')
-    }
+    
     agent any
-       triggers {
-           pollSCM(env.BRANCH_NAME == 'master' ? '* * * * *' : '* * * * *')
-    }
+        
     stages {
-        stage('Checkout SCM') {
+        stage('Build Docker Image') {
+            when {
+                branch 'master'
+            }
             steps {
-                script{
-                    sh 'rm -Rf *'
-                }
+                sh 'docker build -t yasinbudi12/coba:$BUILD_NUMBER .'
+            }
+        }
+        stage('Push Image to Docker hub') {
+            when {
+                branch 'master'
+            }
+            steps {
+                //withCredentials([string(credentialsId: 'docker_pwd', variable: 'dockerHubPwd')]) {
+                  //  sh "docker login -u mcpidinfra -p ${dockerHubPwd}"
+                //}
+                sh 'docker push yasinbudi12/coba:$BUILD_NUMBER'
+            }
+        }
+        stage('Deploy to Server ') {
+            agent { node { label 'worker1' } }
+            when {
+                branch 'master'
+            }
+            steps {
+                //withCredentials([string(credentialsId: 'docker_pwd', variable: 'dockerHubPwd')]) {
+                   // sh "docker login -u $DOCKER_USER -p ${dockerHubPwd}"
+                //}
                 checkout scm
-                script {
-                    echo "get COMMIT_ID"
-                    sh 'echo -n $(git rev-parse --short HEAD) > ./commit-id'
-                    commitId = readFile('./commit-id')
-                }
-                stash(name: 'ws', includes:'**,./commit-id') // stash this current 
-            }
+                sh """
+                docker pull yasinbudi12/coba:$BUILD_NUMBER
+		docker run -p 10000:80 -d yasinbudi12/coba:$BUILD_NUMBER
+		"""
+            }      
         }
-        stage('Initialize') {
+        stage('Remove docker image last build Dev') {
+            when {
+                branch 'master'
+            }
             steps {
-                script{
-                            if ( env.BRANCH_NAME == 'master' ){
-				    projectKubernetes= "${params.PRODUCTION_NAMESPACE}"
-                                envStage = "production"
-                            }else if ( env.BRANCH_NAME == 'development'){
-				projectKubernetes= "${params.DEVELOPMENT_NAMESPACE}"
-                                envStage = "development"
-                    }
-                    echo "${projectKubernetes}"
-                } 
-            }
+                sh 'docker rmi docker push yasinbudi12/coba:$BUILD_NUMBER'
+            }      
         }
-        stage('Build Docker') {
+        stage('Git') {
             steps {
-                script{
-                    sh "docker build . -t rizalkemas68/socialmedia:$BUILD_NUMBER"
-                    sh "docker push rizalkemas68/socialmedia:$BUILD_NUMBER"
-                }
+                step([$class: 'WsCleanup'])
+                checkout scm
             }
-        }
-       stage('Deploy') {
-            steps {
-              script{
-                  echo "Deploy"
-              }
-            }
-        }
-    }
-post {
-        always{
-          	 sh  "ls"
-        }
-       }
+        }      
+    }  
 }
