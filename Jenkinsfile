@@ -43,7 +43,7 @@ pipeline {
                 branch 'master'
             }
             steps {
-                sh 'docker rmi docker yasinbudi12/coba:$BUILD_NUMBER'
+                sh 'docker ps -q -f status=exited | xargs --no-run-if-empty docker rm'
             }      
         }
         stage('Git') {
