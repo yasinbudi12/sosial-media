@@ -43,7 +43,7 @@ pipeline {
                 branch 'master'
             }
             steps {
-                sh 'docker rmi docker push yasinbudi12/coba:$BUILD_NUMBER'
+                sh 'docker rmi docker yasinbudi12/coba:$BUILD_NUMBER'
             }      
         }
         stage('Git') {
