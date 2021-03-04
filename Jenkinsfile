@@ -34,7 +34,7 @@ pipeline {
                 checkout scm
                 sh """
                 docker pull yasinbudi12/coba:$BUILD_NUMBER
-		docker run -p 10000:80 -d yasinbudi12/coba:$BUILD_NUMBER
+		docker run -p 10000:80 -d yasinbudi12/coba:$BUILD_NUMBER'
 		"""
             }      
         }
